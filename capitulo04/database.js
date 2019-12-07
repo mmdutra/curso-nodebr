@@ -50,6 +50,43 @@ class Database {
         return filteredData
     }
 
+    async remove(id) {
+        if (!id) {
+            return await this.writeFile([])
+        }
+
+        const data = await this.getFileData()
+        const index = data.findIndex(item => item.id = parseInt(id))
+        if (index === -1) {
+            throw Error('O usuario informado nao existe')
+        }
+        data.splice(index, 1)
+        return await this.writeFile(data)
+    }
+
+    async update(id, modifications) {
+        const data = await this.getFileData()
+
+        const index = data.findIndex(item => parseInt(item.id) === (id))
+        if (index === -1) {
+            throw new Error('O heroi informado nao existe ainda')
+        }
+
+        const actual = data[index]
+
+        const object = {
+            ...actual,
+            ...modifications
+        }
+
+        data.splice(index, 1)
+
+        return await this.writeFile([
+            ...data,
+            object
+        ])
+    }
+
 }
 
 module.exports = new Database()
