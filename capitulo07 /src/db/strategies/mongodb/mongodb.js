@@ -1,4 +1,4 @@
-const ICrud = require('./interfaces/interfaceCrud')
+const ICrud = require('./../interfaces/interfaceCrud')
 const Mongoose = require('mongoose')
 
 const STATUS = {
@@ -10,53 +10,32 @@ const STATUS = {
 
 class MongoDB extends ICrud {
 
-    constructor() {
+    constructor(connection, schema) {
         super()
-        this._heroes = null 
-        this._connection = null
+        this._schema = schema 
+        this._connection = connection
     }
 
     async create(item) {
-        return await this._heroes.create(item)
+        return await this._schema.create(item)
     }
 
     async read(item) {
-        return await this._heroes.find(item)
-            .skip(skip)
-            .limit(limit)
+        return await this._schema.find(item)
     }
 
     async update(id, item) {
-        return await this._heroes.findByIdAndUpdate(
+        return await this._schema.findByIdAndUpdate(
             id,
             item
         )
     }
 
     async delete(id) {
-        return await this._heroes.findOneAndDelete({ _id: id})
+        return await this._schema.findOneAndDelete({ _id: id})
     }
 
-    defineModel() {
-        const heroesSchema = new Mongoose.Schema({
-            name: {
-                type: String,
-                required: true
-            },
-            power: {
-                type: String,
-                required: true
-            },
-            created_at: {
-                type: Date,
-                default: new Date()
-            }
-        })
-
-        this._heroes = Mongoose.model('heroes', heroesSchema)
-    }
-
-    async connect() {
+    static connect() {
         Mongoose.connect('mongodb://mmoraisd:root@localhost:27017/heroes',
             { 
                 useNewUrlParser: true, 
@@ -70,10 +49,12 @@ class MongoDB extends ICrud {
             }
         )
 
-        this._connection = Mongoose.connection 
-        this._connection.once('open', () => console.log('database connected!'))
+        const connection = Mongoose.connection
 
-        await this.defineModel()
+        connection.once('open', () => console.log('database connected!'))
+
+        return connection
+
     }
 
     async isConnected() {
