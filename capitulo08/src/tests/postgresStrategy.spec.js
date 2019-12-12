@@ -1,8 +1,8 @@
 const assert = require('assert')
 const Postgres = require('../db/strategies/postgres/postgres')
-const Context = require('./../db/strategies/base/contextStrategy')
+const Context = require('../db/strategies/base/contextStrategy')
 
-const HeroeSchema = require('./../db/strategies/postgres/schemas/heroeSchema')
+const HeroeSchema = require('../db/strategies/postgres/schemas/heroeSchema')
 
 const MOCK_HEROI_CADASTRAR = {
     name: 'Black hawk',

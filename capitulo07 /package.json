@@ -1,22 +1,12 @@
 {
-  "name": "capitulo05",
+  "name": "capitulo07",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha src/tests/*.js",
-    "test:watch": "mocha src/tests/*.js -w"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "mongoose": "^5.8.0",
-    "pg": "^7.14.0",
-    "pg-hstore": "^2.3.3",
-    "sequelize": "^5.21.2"
-  },
-  "devDependencies": {
-    "mocha": "^6.2.2"
-  }
+  "license": "ISC"
 }
