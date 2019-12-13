@@ -16,7 +16,7 @@ const MOCK_HEROE_TO_UPDATE = {
 
 let context = {}
 
-describe.only('MongoDb tests', function () {
+describe('MongoDb tests', function () {
 
     this.timeout(Infinity)
 
@@ -41,7 +41,7 @@ describe.only('MongoDb tests', function () {
     })
 
     it('it will return all of heroes createds', async () => {
-        const [{ name, power }] = await context.read({ name: MOCK_HEROE_TO_CREATE.name })
+        const [{ name, power }] = await context.read({ name: MOCK_HEROE_TO_CREATE.name }, 0, 5)
 
         assert.deepEqual(MOCK_HEROE_TO_CREATE, { name, power })
     })
@@ -65,8 +65,8 @@ describe.only('MongoDb tests', function () {
     it('it will delete a hero by id', async () => {
         const [{ _id }] = await context.read({ name: MOCK_HEROE_TO_CREATE.name })
 
-        const { name, power } = await context.delete(_id)
+        const result = await context.delete(_id)
 
-        assert.deepEqual(MOCK_HEROE_TO_CREATE, { name, power })
+        assert.deepEqual(1, result.n)
     })
 })

@@ -20,19 +20,19 @@ class MongoDB extends ICrud {
         return await this._schema.create(item)
     }
 
-    async read(item) {
-        return await this._schema.find(item)
-    }
+    async read(item, skip = 0, limit = 10) {
+        return await this._schema.find(item).skip(skip).limit(limit)
+    }SSSAAA
 
     async update(id, item) {
-        return await this._schema.findByIdAndUpdate(
-            id,
-            item
+        return await this._schema.updateOne(
+            {_id: id},
+            {$set: item }
         )
     }
 
     async delete(id) {
-        return await this._schema.findOneAndDelete({ _id: id})
+        return await this._schema.deleteOne({_id: id})
     }
 
     static connect() {
