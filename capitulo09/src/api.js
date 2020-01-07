@@ -20,7 +20,7 @@ function mapRoutes(instance, methods) {
 async function main() {
     const connection = MongoDB.connect()
     const context = new Context(new MongoDB(connection, HeroeSchema))
-
+    
     const swaggerOptions = {
         info: {
             title: 'Heroes API - @CursoNodeBr',
@@ -29,27 +29,23 @@ async function main() {
         lang: 'pt'
     }
 
-    const plugins = [
-        Inert, 
-        Vision,
+    await app.register([
+        Vision, 
+        Inert,
         {
             plugin: HapiSwagger,
             options: swaggerOptions
         }
-    ];
-
-    await app.register(plugins)
-
-    await app.start()
+    ])
 
     app.route(
         mapRoutes(new HeroRoute(context), HeroRoute.methods())
     )
 
+    await app.start()
     console.log('Servidor rodando na porta', app.info.port)
 
     return app
 }
-
 
 module.exports = main()

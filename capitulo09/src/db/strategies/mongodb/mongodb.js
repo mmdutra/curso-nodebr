@@ -22,7 +22,7 @@ class MongoDB extends ICrud {
 
     async read(item, skip = 0, limit = 10) {
         return await this._schema.find(item).skip(skip).limit(limit)
-    }
+    }SSSAAA
 
     async update(id, item) {
         return await this._schema.updateOne(

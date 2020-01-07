@@ -12,31 +12,35 @@ class HeroRoutes extends BaseRoute {
         return {
             path: '/heroes',
             method: 'GET',
-            options: {
-                handler: (req, res) => {
-                    try {
-                        const { skip, limit, name } = req.query
-
-                        const query = name ? {
-                            name: { $regex: `.*${name || ""}*.` }
-                        } : {}
-
-                        return this.db.read(name ? query : {}, skip, limit)
-                    } catch (error) {
-                        return Boom.internal()
-                    }
-                },
-                description: 'Get heroes list',
+            config: {
                 tags: ['api'],
+                notes: 'deve listar todos os heróis',
                 validate: {
+                    // payload -> body
+                    // headers -> header
+                    // params -> na URL
+                    // query -> query params
                     failAction: (req, res, error) => {
                         throw error
                     },
-                    query: Joi.object({
+                    query: {
                         skip: Joi.number().integer().default(0),
                         limit: Joi.number().integer().default(10),
                         name: Joi.string().min(3).max(100)
-                    })
+                    }
+                }
+            },
+            handler: (req, res) => {
+                try {
+                    const { skip, limit, name } = req.query
+
+                    const query = name ? {
+                        name: { $regex: `.*${name || ""}*.` }
+                    } : {}
+
+                    return this.db.read(name ? query : {}, skip, limit)
+                } catch (error) {
+                    return Boom.internal()
                 }
             }
         }
@@ -47,6 +51,8 @@ class HeroRoutes extends BaseRoute {
             path: '/heroes',
             method: 'POST',
             config: {
+                tags: ['api'],
+                notes: 'Deve cadastrar herói por nome e poder',
                 validate: {
                     failAction: (req, res, error) => {
                         throw error
@@ -77,6 +83,8 @@ class HeroRoutes extends BaseRoute {
             path: '/heroes/{id}',
             method: 'PATCH',
             config: {
+                tags: ['api'],
+                notes: 'Deve atualizar herói',
                 validate: {
                     params: {
                         id: Joi.string().required()
@@ -121,6 +129,8 @@ class HeroRoutes extends BaseRoute {
             path: '/heroes/{id}',
             method: 'DELETE',
             config: {
+                tags: ['api'],
+                notes: 'Deve deletar um herói pelo ID',
                 validate: {
                     failAction: (req, rew, error) => {
                         throw error
@@ -132,10 +142,10 @@ class HeroRoutes extends BaseRoute {
             },
             handler: async (req) => {
                 try {
-                    const { id } = req.params
+                    const {id} = req.params
                     const result = await this.db.delete(id)
 
-                    if (result.n !== 1)
+                    if (result.n !== 1) 
                         return Boom.preconditionFailed('ID não encontrado no banco')
 
                     return {
