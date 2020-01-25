@@ -26,7 +26,7 @@ const USER_DB = {
 }
 
 
-describe.only('Auth test suite', function () {
+describe('Auth test suite', function () {
     this.beforeAll(async () => {
         app = await api
 
