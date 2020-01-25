@@ -1,3 +1,6 @@
+const pg = require('pg')
+delete pg.native
+
 const Hapi = require('hapi')
 const Context = require('./db/strategies/base/contextStrategy')
 const MongoDB = require('./db/strategies/mongodb/mongodb')
@@ -54,10 +57,19 @@ async function main() {
     ])
     app.auth.strategy('jwt', 'jwt', {
         key: JWT_SECRET,
-        // options: {
-        //     expiresIn: 30
-        // },
-        validate: (dado, request) => {
+        validate: async (dado, request) => {
+
+            const [result] = await postgresModel.read({
+                username: dado.username.toLowerCase(),
+                id: dado.id
+            })
+
+            if (!result) {
+                return {
+                    isValid: false
+                }
+            }
+
             return {
                 isValid: true
             }

@@ -21,7 +21,7 @@ describe('Postgres Strategy', function (suite) {
     before(async function () {
         const connection = await Postgres.connect()
         const model = await Postgres.defineModel(connection, HeroeSchema)
-        
+
         context = new Context(new Postgres(connection, model))
 
         await context.delete()
@@ -35,10 +35,12 @@ describe('Postgres Strategy', function (suite) {
 
     it('Create Heroe', async function () {
         const result = await context.create(MOCK_HEROI_CADASTRAR)
-        delete result.id
-        assert.deepEqual(result, MOCK_HEROI_CADASTRAR)
+
+        delete result.dataValues.id
+
+        assert.deepEqual(result.dataValues, MOCK_HEROI_CADASTRAR)
     })
-    
+
     it('Read Heroes', async function () {
         const [result] = await context.read({
             name: MOCK_HEROI_CADASTRAR.name
@@ -62,7 +64,7 @@ describe('Postgres Strategy', function (suite) {
 
         const [result] = await context.update(itemUpdate.id, newItem)
         const [itemUpdated] = await context.read({ id: itemUpdate.id })
-        
+
         assert.deepEqual(result, 1)
 
         assert.deepEqual(itemUpdated.name, newItem.name)
@@ -70,7 +72,7 @@ describe('Postgres Strategy', function (suite) {
     })
 
     it('Delete Heroe', async () => {
-        
+
         const [itemDelete] = await context.read({ name: MOCK_HEROI_CADASTRAR.name, power: MOCK_HEROI_CADASTRAR.power })
 
         const result = await context.delete(itemDelete.id)

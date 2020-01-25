@@ -1,76 +1,83 @@
-const IDb = require('./../base/contextStrategy');
+const IDb = require('./../interfaces/interfaceCrud')
 const Sequelize = require('sequelize');
 
-class PostgreSQLStrategy extends IDb {
-    constructor(connection, schema) {
-        super();
-        this._db = schema;
-        this._connection = connection;
-    }
+class Postgres extends IDb {
+  constructor(connection, schema) {
+    super();
+    this._db = schema;
+    this._connection = connection;
 
-    static async defineModel(connection, schema) {
-        const model = connection.define(
-            schema.name, schema.schema, schema.options,
-        );
-        await model.sync()
-        return model
-    }
+  }
 
-    static async connect() {
-        const connection = new Sequelize(
-            'heroes',
-            'mmoraisd',
-            'password',
-            {
-                host: 'localhost',
-                dialect: 'postgres',
-                quoteIdentifiers: false,
-                operatorAliases: false,
-                logging: false
-            }
-        )
-        return connection
-    }
+  static async defineModel(connection, schema) {
+    const model = connection.define(
+      schema.name, schema.schema, schema.options,
+    );
+    await model.sync()
+    return model
+  }
 
-    async isConnected() {
-        try {
-            await this._connection.authenticate();
-            return true;
-        } catch (error) {
-            console.error('fail!', error);
-            return false;
-        }
-    }
+  static async connect() {
+    const sequelize = new Sequelize(
+      'heroes', //database
+      'mmoraisd', // user
+      'password', //senha
+      {
+        host: 'localhost',
+        dialect: 'postgres',
+        // case sensitive
+        quoteIdentifiers: false,
+        // deprecation warning
+        operatorsAliases: '0',
+        //disable logging
+        logging: false,
+        // dialectOptions: {
+        //   ssl: true,
+      },
+    );
+    return sequelize
+  }
 
-    create(item) {
-        return this._db.create(item, {
-            raw: true
-        });
+  async isConnected() {
+    try {
+      // await this._connect();
+      await this._connection.authenticate();
+      return true;
+    } catch (error) {
+      console.error('fail!', error);
+      return false;
     }
+  }
 
-    read(item) {
-        return this._db.findAll({
-            where: item,
-            raw: true
-        });
-    }
+  create(item) {
+    return this._db.create(item, {
+      raw: true
+    });
+  }
 
-    update(id, item, upsert = false) {
-        const fn = upsert ? 'upsert' : 'update'
-        return this._db[fn](item, {
-            where: {
-                id
-            }
-        });
-    }
-    delete(id) {
-        const query = id ? {
-            id
-        } : {};
-        return this._db.destroy({
-            where: query
-        });
-    }
+  read(item) {
+    return this._db.findAll({
+      where: item,
+      raw: true
+    });
+  }
+
+  update(id, item, upsert = false) {
+    const fn = upsert ? 'upsert' : 'update'
+    return this._db[fn](item, {
+      where: {
+        id
+      }
+    });
+  }
+  delete(id) {
+    const query = id ? {
+      id
+    } : {};
+    return this._db.destroy({
+      where: query
+    });
+  }
 }
 
-module.exports = PostgreSQLStrategy;
+module.exports = Postgres;
